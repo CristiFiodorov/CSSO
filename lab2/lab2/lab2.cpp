@@ -17,31 +17,28 @@ void replace(char* text, char oldChar, char newChar) {
 
 
 DWORD writeHiveToFile(HKEY hKey, LPCSTR fileName) {
-	HKEY openedHKey;
-	CHECK(RegOpenKeyEx(hKey, NULL, 0, KEY_READ, &openedHKey) == ERROR_SUCCESS, 1, "Error at RegOpenKeyEx\n");
-
 	DWORD subKeys;
 	DWORD maxSubKeyLen;
 	FILETIME fileTime;
 
-	LSTATUS status = RegQueryInfoKey(openedHKey, NULL, NULL, NULL, &subKeys, &maxSubKeyLen, NULL, NULL, NULL, NULL, NULL, &fileTime);
-	CHECK(status == ERROR_SUCCESS, 1, "Error at RegQueryInfoKey\n", RegCloseKey(openedHKey));
-
-	HANDLE hFile = CreateFile(fileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	CHECK(hFile != INVALID_HANDLE_VALUE, 1, "An error has occurred at CreateFile in writeToFile\n", RegCloseKey(openedHKey));
+	LSTATUS status = RegQueryInfoKey(hKey, NULL, NULL, NULL, &subKeys, &maxSubKeyLen, NULL, NULL, NULL, NULL, NULL, &fileTime);
+	CHECK(status == ERROR_SUCCESS, 1, "Error at RegQueryInfoKey\n");
 
 	SYSTEMTIME systemTime;
-	CHECK(FileTimeToSystemTime(&fileTime, &systemTime) != 0, 1, "Error at FileTimeToSystemTime\n", CloseHandle(hFile), RegCloseKey(openedHKey))
+	CHECK(FileTimeToSystemTime(&fileTime, &systemTime) != 0, 1, "Error at FileTimeToSystemTime\n");
+
+	
+	HANDLE hFile = CreateFile(fileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	CHECK(hFile != INVALID_HANDLE_VALUE, 1, "An error has occurred at CreateFile in writeToFile\n");
 
 	char text[1000];
 	sprintf_s(text, "SubKeys: %d\nMaxSubKeyLen: %d\nLastWriteTime: %d/%d/%d %d:%d:%d", 
 		subKeys, maxSubKeyLen, systemTime.wYear, systemTime.wMonth, systemTime.wDay, systemTime.wHour, systemTime.wSecond, systemTime.wMilliseconds);
 	DWORD bytesWritten;
-	CHECK(WriteFile(hFile, text, strlen(text), &bytesWritten, NULL) == TRUE, 1, "An error has occurred at WriteFile\n", CloseHandle(hFile), RegCloseKey(openedHKey));
+	CHECK(WriteFile(hFile, text, strlen(text), &bytesWritten, NULL) == TRUE, 1, "An error has occurred at WriteFile\n", CloseHandle(hFile));
 
 
 	CloseHandle(hFile);
-	RegCloseKey(openedHKey);
 	return 0;
 }
 
