@@ -5,6 +5,16 @@
 
 #define PATH_LENGTH 260
 
+
+void replaceSlashes(char* text, int length) {
+	for (int i = 0; i < length; i++) {
+		if (text[i] == '/') {
+			text[i] = '-';
+		}
+	}
+}
+
+
 DWORD writeHiveToFile(HKEY hKey, LPCSTR fileName) {
 	HKEY openedHKey;
 	CHECK(RegOpenKeyEx(hKey, NULL, 0, KEY_READ, &openedHKey) == ERROR_SUCCESS, 1, "Error at RegOpenKeyEx\n");
@@ -87,7 +97,7 @@ DWORD makeFilesForHives(HKEY hKey, LPCSTR subKeyName, LPCSTR dirPath) {
 	CHECK(status == ERROR_SUCCESS, -1, "Error at RegQueryInfoKey\n", RegCloseKey(openedHKey));
 
 	char* fileName = new char[maxSubKeyLen + 1];
-	DWORD nameLen = maxSubKeyLen;
+	DWORD nameLen = maxSubKeyLen + 1;
 	char fileFullName[PATH_LENGTH];
 
 	for (int i = 0; i < subKeys; ++i) {
@@ -97,11 +107,12 @@ DWORD makeFilesForHives(HKEY hKey, LPCSTR subKeyName, LPCSTR dirPath) {
 		fileName[nameLen] = '\0';
 
 		sprintf_s(fileFullName, "%s\\%s", dirPath, fileName);
+		replaceSlashes(fileFullName, strlen(fileFullName));
 
 		HANDLE hFile = CreateFile(fileFullName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		CHECK(hFile != INVALID_HANDLE_VALUE, -1, "An error has occurred at CreateFile in writeToFile\n", RegCloseKey(openedHKey), delete[] fileName);
 		CloseHandle(hFile);
-		nameLen = maxSubKeyLen;
+		nameLen = maxSubKeyLen + 1;
 	}
 	delete[] fileName;
 
