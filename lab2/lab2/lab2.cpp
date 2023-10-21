@@ -6,11 +6,12 @@
 #define PATH_LENGTH 260
 
 
-void replaceSlashes(char* text, int length) {
-	for (int i = 0; i < length; i++) {
-		if (text[i] == '/') {
-			text[i] = '-';
+void replace(char* text, char oldChar, char newChar) {
+	while (*text != '\0') {
+		if (*text == oldChar) {
+			*text = newChar;
 		}
+		text++;
 	}
 }
 
@@ -100,14 +101,14 @@ DWORD makeFilesForHives(HKEY hKey, LPCSTR subKeyName, LPCSTR dirPath) {
 	DWORD nameLen = maxSubKeyLen + 1;
 	char fileFullName[PATH_LENGTH];
 
-	for (int i = 0; i < subKeys; ++i) {
+	for (DWORD i = 0; i < subKeys; ++i) {
 		status = RegEnumKeyEx(openedHKey, i, fileName, &nameLen, 0, 0, 0, 0);
 		CHECK(status == ERROR_SUCCESS, -1, "Error at RegEnumKeyEx\n", RegCloseKey(openedHKey), delete[] fileName);
 
 		fileName[nameLen] = '\0';
 
 		sprintf_s(fileFullName, "%s\\%s", dirPath, fileName);
-		replaceSlashes(fileFullName, strlen(fileFullName));
+		replace(fileFullName, '/', '_');
 
 		HANDLE hFile = CreateFile(fileFullName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		CHECK(hFile != INVALID_HANDLE_VALUE, -1, "An error has occurred at CreateFile in writeToFile\n", RegCloseKey(openedHKey), delete[] fileName);
