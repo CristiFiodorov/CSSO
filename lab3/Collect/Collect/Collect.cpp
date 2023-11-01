@@ -124,7 +124,7 @@ int main()
 
 	void* fileMapP = MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
 	CHECK(fileMapP != NULL, -1, "Error at MapViewOfFile", CloseHandle(hMapping));
-	memcpy(hMapping, buffer, strlen(buffer));
+	memcpy(fileMapP, buffer, strlen(buffer));
 
 	CloseHandle(hMapping);
 	return 0;

@@ -82,7 +82,7 @@ int main() {
 	LPCSTR* params[3];
 
 	for (int i = 0; i < 3; i++) {
-		params[i] = new LPCSTR[2]{ fileNames[i], "Discord.exe" };
+		params[i] = new LPCSTR[2]{ fileNames[i], "svchost.exe" };
 		hThreads[i] = CreateThread(NULL, 0, searchInFile, params[i], 0, NULL);
 		CHECK(hThreads[i] != NULL, -1, "Error at CreateThread\n");
 	}
