@@ -27,14 +27,10 @@ int main()
 
     CHECK(runProcess("external\\Collect.exe", INFINITE) == 0, -1, "Error at runProcess Collect.exe\n", CloseHandle(hMapping));
 
-    char buffer[1024];
-    memset(buffer, 0, 1024);
-    char* fileMapP = (char*)MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
+    LPSTR fileMapP = (char*)MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
     CHECK(fileMapP != NULL, -1, "Error at MapViewOfFile", CloseHandle(hMapping));
-    memcpy(buffer, fileMapP, strlen(fileMapP));
+    printf("%s\n", fileMapP);
     CloseHandle(hMapping);
-
-    printf("%s\n", buffer);
 
     CHECK(runProcess("external\\Filter.exe", 0) == 0, -1, "Error at runProcess Filter.exe\n");
     CHECK(runProcess("external\\Killer.exe", INFINITE) == 0, -1, "Error at runProcess Killer.exe\n");

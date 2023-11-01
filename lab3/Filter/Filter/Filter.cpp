@@ -24,8 +24,8 @@ BOOL setPrivilege(LPCSTR privilegeName) {
 
 DWORD WINAPI searchInFile(LPVOID lpThreadParameter)
 {
-	char* fileName = *(char**)lpThreadParameter;
-	char* searchString = ((char**)lpThreadParameter)[1];
+	LPCSTR fileName = ((LPCSTR*)lpThreadParameter)[0];
+	LPCSTR searchString = ((LPCSTR*)lpThreadParameter)[1];
 	
 	HANDLE hFile = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	CHECK(hFile != INVALID_HANDLE_VALUE, -1, "An error has occurred at CreateFile in searchInFile\n");
@@ -33,12 +33,14 @@ DWORD WINAPI searchInFile(LPVOID lpThreadParameter)
 	DWORD fileSize = GetFileSize(hFile, NULL);
 	CHECK(fileSize != INVALID_FILE_SIZE, -1, "An error has occurred at GetFileSize in searchInFile\n", CloseHandle(hFile));
 	
-	char* fileContent = new char[fileSize + 1];
+	LPSTR fileContent = new char[fileSize + 1];
 	memset(fileContent, 0, fileSize + 1);
 	CHECK(ReadFile(hFile, fileContent, fileSize, NULL, NULL), -1, "An error has occurred at ReadFile in searchInFile\n", CloseHandle(hFile));
-
+	
+	CloseHandle(hFile);
+	
 	DWORD count = 0;
-	char* p = fileContent;
+	LPSTR p = fileContent;
 	
 	while (*p != '\0') {
 		while (*p != '\n' && *p != '\0') {
