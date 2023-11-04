@@ -35,24 +35,26 @@ DWORD WINAPI searchInFile(LPVOID lpThreadParameter)
 	
 	LPSTR fileContent = new char[fileSize + 1];
 	memset(fileContent, 0, fileSize + 1);
-	CHECK(ReadFile(hFile, fileContent, fileSize, NULL, NULL), -1, "An error has occurred at ReadFile in searchInFile\n", CloseHandle(hFile));
+	BOOL res = ReadFile(hFile, fileContent, fileSize, NULL, NULL);
+	CHECK(res, -1, "An error has occurred at ReadFile in searchInFile\n", CloseHandle(hFile), delete[] fileContent);
 	
 	CloseHandle(hFile);
 	
 	DWORD count = 0;
-	LPSTR p = fileContent;
+	LPSTR p_end = fileContent;
+	LPSTR p_start = fileContent;
 	
-	while (*p != '\0') {
-		while (*p != '\n' && *p != '\0') {
-			p++;
+	while (*p_end != '\0') {
+		while (*p_end != '\n' && *p_end != '\0') {
+			p_end++;
 		}
-		if (*p == '\n') {
-			*p = '\0';
+		if (*p_end == '\n') {
+			*p_end = '\0';
 			
-			for (int i = 0; i < strlen(fileContent) - strlen(searchString) + 1; i++) {
-				if (searchString[0] == fileContent[i]) {
+			for (int i = 0; i < strlen(p_start) - strlen(searchString) + 1; i++) {
+				if (searchString[0] == p_start[i]) {
 					for (int j = 1; j < strlen(searchString); j++) {
-						if (searchString[j] != fileContent[i + j]) {
+						if (searchString[j] != p_start[i + j]) {
 							break;
 						}
 						if (j == strlen(searchString) - 1) {
@@ -61,12 +63,13 @@ DWORD WINAPI searchInFile(LPVOID lpThreadParameter)
 					}
 				}
 			}
-			p++;
-			fileContent = p;
+			p_end++;
+			p_start = p_end;
 		}
 	}
 
 	printf("%s: %d\n", fileName, count);
+	delete[] fileContent;
 	return count;
 }
 
@@ -98,7 +101,7 @@ int main() {
 	}
 	
 	printf("Sleep\n");
-	Sleep(1000 * 1800);
+	Sleep(1000 * 60 * 30);
 	
 	return 0;
 }

@@ -34,7 +34,7 @@ int main()
 
 	printf("Filter.exe has PID: %d\n", PID);
 
-    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, FALSE, PID);
+    HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, PID);
     CHECK(hProcess != 0, -1, "Error at OpenProcess\n");
 
     if (TerminateProcess(hProcess, 1)) {

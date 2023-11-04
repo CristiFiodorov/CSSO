@@ -9,7 +9,7 @@ DWORD runProcess(LPCSTR exePath, DWORD waitingTime) {
     si.cb = sizeof(si);
     memset(&pi, 0, sizeof(pi));
 
-    CHECK(CreateProcess(exePath, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi), -1, "Error at CreateProcess\n", printf("%d\n", GetLastError()));
+    CHECK(CreateProcess(exePath, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi), -1, "Error at CreateProcess\n");
 
 
     WaitForSingleObject(pi.hProcess, waitingTime);
