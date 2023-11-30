@@ -1,0 +1,3 @@
+[submodule "lab4/Management"]
+	path = lab4/Management
+	url = https://github.com/CristiFiodorov/CSSO-HW4.git
