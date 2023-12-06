@@ -1,3 +1,6 @@
 [submodule "lab4/Management"]
 	path = lab4/Management
 	url = https://github.com/CristiFiodorov/CSSO-HW4.git
+[submodule "lab5/RequestClient"]
+	path = lab5/RequestClient
+	url = https://github.com/CristiFiodorov/CSSO-HW5.git
