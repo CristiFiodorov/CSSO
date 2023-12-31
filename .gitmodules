@@ -4,3 +4,6 @@
 [submodule "lab5/RequestClient"]
 	path = lab5/RequestClient
 	url = https://github.com/CristiFiodorov/CSSO-HW5.git
+[submodule "lab6/PerformanceCheckOut"]
+	path = lab6/PerformanceCheckOut
+	url = https://github.com/CristiFiodorov/CSSO-HW6
